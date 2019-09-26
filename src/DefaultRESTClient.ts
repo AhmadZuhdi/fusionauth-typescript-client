@@ -89,7 +89,14 @@ export default class DefaultRESTClient implements IRESTClient {
    * @param body The object to be written to the request body as JSON.
    */
   withJSONBody(body: object): DefaultRESTClient {
-    this.body = JSON.stringify(body);
+    this.body = JSON.stringify(body, (k, v: any|any[]) => {
+
+      if (v instanceof Set) {
+        return Array.from(v);
+      }
+
+      return v;
+    });
     this.withHeader('Content-Type', 'application/json');
     // Omit the Content-Length, this is set auto-magically by the request library
     return this;
